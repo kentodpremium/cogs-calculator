@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Cost Calculator</title>
+    <script src="script.js" defer></script>
+    <script src="PCLS.js" defer></script>
+    <script src="material.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="header-tabs-wrapper">
+                <div class="header">
+                    <h2 style="color: #FFFFFF;">Service Cost Calculator</h2> <!-- Main Text color -->
+                </div>
+                <div class="tabs">
+                    <button class="tab-button" onclick="openTab(event, 'localpurchase')">LocalPurchase</button>
+                    <button class="tab-button" onclick="openTab(event, 'material')">Material</button>
+                    <button class="tab-button" onclick="openTab(event, 'manufacturing')">Manufacturing</button>
+                    <button class="tab-button" onclick="openTab(event, 'consumable')">Consumable</button>
+                    <button class="tab-button" onclick="openTab(event, 'service')">Service</button>
+                    <button class="tab-button" onclick="openTab(event, 'labor')">Labor</button>
+                    <button class="tab-button" onclick="openTab(event, 'summary')">Summary</button>
+                </div>
+            </div>
+
+            <!-- Localpurchase tab-->
+            <div id="localpurchase" class="tab-content">
+                <h3>LocalPurchase</h3>
+                <div class="input-section">
+                    <!-- Input fields for LocalPurchase -->
+                    <label for="description">Description:</label>
+                    <input type="text" id="description-localpurchase" placeholder="Enter Description"
+                        writingsuggestions="true" oninput="showDescriptionSuggestions('localpurchase')">
+                    <div id="description-suggestions-localpurchase" class="autocomplete-suggestions"></div>
+
+                    <label for="partNumber">Part Number:</label>
+                    <input type="text" id="partNumber-localpurchase" placeholder="Enter Part Number"
+                        oninput="showPartNumberSuggestions('localpurchase')">
+                    <div id="partNumber-suggestions-localpurchase" class="autocomplete-suggestions"></div>
+
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity-localpurchase" min="1" value="1">
+
+                    <label for="pricePerPcs">Cost Per Pcs:</label>
+                    <input type="number" id="pricePerPcs-localpurchase" step="0.01" min="0" value="0">
+
+                    <!-- Total Calculation Display -->
+                    <label for="calculated-temp">Amount Total:</label>
+                    <input type="number" id="calculated-temp-localpurchase" readonly>
+
+                    <button onclick="addRow('localpurchase')">Add to Table</button>
+                </div>
+                <table id="serviceTable-localpurchase" class="service-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Part Number</th>
+                            <th>Quantity</th>
+                            <th>Cost Per Pcs</th>
+                            <th>Amount Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="text-align: right;"><strong>Total Cost Local Purchase:</strong></td>
+                            <td id="total-cost-localpurchase" colspan="2">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Consumable tab-->
+            <div id="consumable" class="tab-content">
+                <h3>Consumable</h3>
+                <div class="input-section">
+                    <!-- Input fields for Consumable -->
+                    <label for="description">Description:</label>
+                    <input type="text" id="description-consumable" placeholder="Enter Consumable"
+                        oninput="showDescriptionSuggestions('consumable')">
+                    <div id="description-suggestions-consumable" class="autocomplete-suggestions"></div>
+
+                    <label for="partNumber">Part Number:</label>
+                    <input type="text" id="partNumber-consumable" placeholder="Enter Part Number"
+                        oninput="showPartNumberSuggestions('consumable')">
+                    <div id="partNumber-suggestions-consumable" class="autocomplete-suggestions"></div>
+
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity-consumable" min="1" value="1">
+
+                    <label for="pricePerPcs">Cost Per Pcs:</label>
+                    <input type="number" id="pricePerPcs-consumable" step="0.01" min="0" value="0">
+
+                    <!-- Total Calculation Display -->
+                    <label for="calculated-temp">Amount Total:</label>
+                    <input type="number" id="calculated-temp-consumable" readonly>
+
+                    <button onclick="addRow('consumable')">Add to Table</button>
+                </div>
+                <table id="serviceTable-consumable" class="service-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Part Number</th>
+                            <th>Quantity</th>
+                            <th>Cost Per Pcs</th>
+                            <th>Amount Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="text-align: right;"><strong>Total Cost Consumable:</strong></td>
+                            <td id="total-cost-consumable" colspan="2">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Material Tab -->
+            <div id="material" class="tab-content active">
+                <h3>Material</h3>
+                <div class="input-section">
+                    <!-- Input Description -->
+                    <label for="description-material">Description:</label>
+                    <input type="text" id="description-material" placeholder="Enter Material Description">
+
+                    <!-- Replace the grade material input and suggestions with this table -->
+                    <div class="material-grade-section">
+                        <h4>Select Material Grade</h4>
+                        <table id="gradeSelectionTable">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Grade</th>
+                                    <th>Material Type</th>
+                                    <th>Stockist Price</th>
+                                    <th>Ex-Mill Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Remove or comment out the old grade material input -->
+                    <!--
+                    <label for="grade-material">Grade Material:</label>
+                    <input type="text" id="grade-material" placeholder="Select Grade Material"
+                        oninput="showGradeSuggestions()">
+                    <div id="grade-suggestions" class="autocomplete-suggestions"></div>
+                    -->
+
+                    <!-- Material Price -->
+                    <label for="material-price">Material Price:</label>
+                    <input type="number" id="material-price" step="0.01" placeholder="Enter Material Price or Select"
+                        oninput="calculatePricePerPcs()">
+
+                    <!-- Material shape selection -->
+                    <label for="material-shape">Material Shape:</label>
+                    <select id="material-shape" onchange="updateDimensionFields(this.value)">
+                        <option value="">Select Material Shape</option>
+                        <option value="plate">Plate</option>
+                        <option value="h-beam">H Beam / I Beam</option>
+                        <option value="round-bar">Round Bar (Pejal)</option>
+                        <option value="pipe">Pipe</option>
+                        <option value="unp">UNP / U Kanal</option>
+                        <option value="angle">Siku</option>
+                    </select>
+
+                    <!-- Inside the material tab content, after the material shape selection -->
+                    <div class="material-info-wrapper">
+                        <div class="dimension-inputs">
+                            <!-- Move all dimension input containers here -->
+                            <div id="length-container" style="display: none;">
+                                <label for="length">Panjang (mm):</label>
+                                <input type="number" id="length" min="0" step="0.001" placeholder="Masukkan panjang"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <div id="width-container" style="display: none;">
+                                <label for="width">Lebar/Sisi (mm):</label>
+                                <input type="number" id="width" min="0" step="0.1"
+                                    placeholder="Masukkan lebar atau sisi" oninput="calculateWeight()">
+                            </div>
+                            <div id="width1-container" style="display: none;">
+                                <label for="width1">Lebar 1 (mm):</label>
+                                <input type="number" id="width1" min="0" step="0.1" placeholder="Masukkan lebar 1"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <div id="width2-container" style="display: none;">
+                                <label for="width2">Lebar 2 (mm):</label>
+                                <input type="number" id="width2" min="0" step="0.1" placeholder="Masukkan lebar 2"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <div id="thickness-container" style="display: none;">
+                                <label for="thickness">Tebal (mm):</label>
+                                <input type="number" id="thickness" min="0" step="0.1" placeholder="Masukkan tebal"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <div id="diameter-container" style="display: none;">
+                                <label for="diameter">Diameter (mm):</label>
+                                <input type="number" id="diameter" min="0" step="0.1" placeholder="Masukkan diameter"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <div id="webThickness-container" style="display: none;">
+                                <label for="webThickness">Tebal Web (mm):</label>
+                                <input type="number" id="webThickness" min="0" step="0.1"
+                                    placeholder="Masukkan tebal web" oninput="calculateWeight()">
+                            </div>
+                            <div id="webHeight-container" style="display: none;">
+                                <label for="webHeight">Tinggi Web (mm):</label>
+                                <input type="number" id="webHeight" min="0" step="0.1" placeholder="Masukkan tinggi web"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <div id="flangeWidth-container" style="display: none;">
+                                <label for="flangeWidth">Lebar Flange (mm):</label>
+                                <input type="number" id="flangeWidth" min="0" step="0.1"
+                                    placeholder="Masukkan lebar flange" oninput="calculateWeight()">
+                            </div>
+                            <div id="flangeThickness-container" style="display: none;">
+                                <label for="flangeThickness">Tebal Flange (mm):</label>
+                                <input type="number" id="flangeThickness" min="0" step="0.1"
+                                    placeholder="Masukkan tebal flange" oninput="calculateWeight()">
+                            </div>
+                            <!-- Replace the old legLength-container with these two new containers -->
+                            <div id="legA-container" style="display: none;">
+                                <label for="legA">Panjang Kaki A (mm):</label>
+                                <input type="number" id="legA" min="0" step="0.1" placeholder="Masukkan panjang kaki A"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <div id="legB-container" style="display: none;">
+                                <label for="legB">Panjang Kaki B (mm):</label>
+                                <input type="number" id="legB" min="0" step="0.1" placeholder="Masukkan panjang kaki B"
+                                    oninput="calculateWeight()">
+                            </div>
+                            <!-- Remove or comment out the old legLength-container -->
+                            <!-- ...existing code... -->
+                            <div id="outerDiameter-container" style="display: none;">
+                                <label for="outerDiameter">Diameter Luar (mm):</label>
+                                <input type="number" id="outerDiameter" min="0" step="0.1"
+                                    placeholder="Masukkan diameter luar" oninput="calculateWeight()">
+                            </div>
+                            <div id="innerDiameter-container" style="display: none;">
+                                <label for="innerDiameter">Diameter Dalam (mm):</label>
+                                <input type="number" id="innerDiameter" min="0" step="0.1"
+                                    placeholder="Masukkan diameter dalam" oninput="calculateWeight()">
+                            </div>
+                        </div>
+
+                        <div class="material-image" id="material-image">
+                            <div class="image-placeholder">Select a material shape to view diagram</div>
+                        </div>
+                    </div>
+
+                    <label for="density">Density (g/cm³):</label>
+                    <input type="number" id="density" step="0.01" placeholder="Density material" readonly
+                        oninput="calculateWeight()">
+                    <div id="density-suggestions" class="autocomplete-suggestions"></div>
+
+                    <div class="input-section">
+                        <label>
+                            <input type="checkbox" id="manual-weight-check"> Input Weight Manually
+                        </label>
+                    </div>
+
+                    <!-- Change the weight input field -->
+                    <label for="weight">Net Weight (kg):</label>
+                    <input type="number" id="weight" step="0.01" placeholder="Weight will be calculated automatically"
+                        readonly>
+
+                    <label for="gross-weight">Gross Weight (kg):</label>
+                    <input type="number" id="gross-weight" step="0.01" placeholder="Gross Weight" readonly>
+
+                    <label for="nesting">Nesting:</label>
+                    <input type="number" id="nesting" min="0.01" step="0.01" value="1" placeholder="Enter Nesting">
+
+                    <!-- Cost Per Pcs and Calculated Cost -->
+                    <label for="price-per-pcs">Cost Per Pcs:</label>
+                    <input type="number" id="price-per-pcs" readonly>
+
+                    <!-- Just update this one line -->
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" min="1" value="1" placeholder="Enter quantity">
+
+                    <label for="calculated-cost-material">Calculated Cost Material:</label>
+                    <input type="number" id="calculated-cost-material" readonly>
+
+                    <!-- Button to Add Row to Material Table -->
+                    <button onclick="addMaterialRow()">Add to Material Table</button>
+                </div>
+
+                <!-- Add formula display div after the dimension inputs -->
+                <div id="formula-display" class="formula-info">
+                    <!-- Formula and example will be displayed here -->
+                </div>
+
+                <!-- Table for Material Costs -->
+                <table id="materialTable">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Grade</th>
+                            <th>Material Type</th>
+                            <th>Material Shape</th>
+                            <th>Net Weight</th>
+                            <th>Nesting</th>
+                            <th>Gross Weight</th>
+                            <th>Cost Per Pcs</th>
+                            <th>Quantity</th>
+                            <th>Cost Material</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be populated dynamically -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="9" style="text-align: right;"><strong>Total Cost Material:</strong></td>
+                            <td id="total-cost-material" colspan="2">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+
+            <!-- Manufacturing Tab -->
+            <div id="manufacturing" class="tab-content">
+                <h3>Manufacturing</h3>
+                <div class="input-section">
+                    <table id="manufacturingTable">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Material Type</th>
+                                <th>Cutting</th>
+                                <th>Forming</th>
+                                <th>Rolling</th>
+                                <th>Machining</th>
+                                <th>Quantity</th>
+                                <th>Gross Weight</th>
+                                <th>Amount Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Will be populated dynamically from material data -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="8" style="text-align: right;"><strong>Total Manufacturing Cost:</strong>
+                                </td>
+                                <td id="total-cost-manufacturing">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- Total Section -->
+                <div id="total-section" class="tab-content">
+                    <h3>Total Cost Summary</h3>
+                    <table id="totalCostTable">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Material Type</th>
+                                <th>Cutting</th>
+                                <th>Forming</th>
+                                <th>Rolling</th>
+                                <th>Machining</th>
+                                <th>Quantity</th>
+                                <th>Gross Weight</th>
+                                <th>Manufacturing Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be populated dynamically -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="8" style="text-align: right;"><strong>Total Cost Manufacturing:</strong>
+                                </td>
+                                <td id="total-cost-manufacturing">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Labor tab-->
+            <div id="labor" class="tab-content">
+                <h3>Labor</h3>
+                <div class="input-section">
+                    <label for="description">Description:</label>
+                    <input type="text" id="description-labor" placeholder="Enter Service Type"
+                        oninput="showDescriptionSuggestions('labor')">
+                    <div id="description-suggestions-labor" class="autocomplete-suggestions"></div>
+
+                    <label for="pricePerPcs">Rate per Hour:</label>
+                    <input type="number" id="pricePerPcs-labor" step="0.01" min="0" value="0">
+
+                    <label for="duration">Duration (Hours):</label>
+                    <input type="number" id="duration-labor" min="1" value="1">
+
+                    <label for="quantity">Number of Workers:</label>
+                    <input type="number" id="quantity-labor" min="1" value="1">
+
+                    <label for="calculated-temp">Amount Total:</label>
+                    <input type="number" id="calculated-temp-labor" readonly>
+
+                    <button onclick="addRow('labor')">Add to Table</button>
+                </div>
+
+                <table id="serviceTable-labor" class="service-table">
+                    <thead>
+                        <tr>
+                            <th>Service Description</th>
+                            <th>Rate per Hour</th>
+                            <th>Duration (Hours)</th>
+                            <th>Number of Workers</th>
+                            <th>Amount Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" style="text-align: right;"><strong>Total Cost Labor:</strong></td>
+                            <td id="total-cost-labor" colspan="2">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Service tab -->
+            <div id="service" class="tab-content">
+                <h3>Service</h3>
+                <div class="input-section">
+                    <label for="description">Description:</label>
+                    <input type="text" id="description-service" placeholder="Enter Service Description"
+                        oninput="showDescriptionSuggestions('service')">
+                    <div id="description-suggestions-service" class="autocomplete-suggestions"></div>
+
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity-service" min="1" value="1">
+
+                    <label for="pricePerPcs">Cost Per Service:</label>
+                    <input type="number" id="pricePerPcs-service" step="0.01" min="0" value="0">
+
+                    <label for="calculated-temp">Amount Total:</label>
+                    <input type="number" id="calculated-temp-service" readonly>
+
+                    <button onclick="addRow('service')">Add to Table</button>
+                </div>
+
+                <table id="serviceTable-service" class="service-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Cost Per Service</th>
+                            <th>Amount Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right;"><strong>Total Cost Service:</strong></td>
+                            <td id="total-cost-service" colspan="2">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Summary tab -->
+            <div id="summary" class="tab-content">
+                <h3>Cost Summary</h3>
+                <table id="summaryTable">
+                    <thead>
+                        <tr>
+                            <th>Cost Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2"><strong>Direct Material Cost (DM)</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Local Purchase Cost</td>
+                            <td id="summary-localpurchase">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Material Cost</td>
+                            <td id="summary-material">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Consumable Cost</td>
+                            <td id="summary-consumable">0.00</td>
+                        </tr>
+                        <tr class="highlight-total">
+                            <td><strong>DM Cost</strong></td>
+                            <td id="total-dm">0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><strong>Direct Labor Cost (DL)</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Manufacturing Cost</td>
+                            <td id="summary-manufacturing">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Service Cost</td>
+                            <td id="summary-service">0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Labor Cost</td>
+                            <td id="summary-labor">0.00</td>
+                        </tr>
+                        <tr class="highlight-total">
+                            <td><strong>DL Cost</strong></td>
+                            <td id="total-dl">0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr class="highlight-total">
+                            <td><strong>Cost of Goods Manufactured (COGM)</strong></td>
+                            <td id="total-cogm">0.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Overhead Cost (%)</strong></td>
+                            <td><input type="number" id="overhead-cost" value="12" oninput="updateSummary()"></td>
+                        </tr>
+                        <tr class="highlight-total">
+                            <td><strong>Cost of Goods Sold (COGS)</strong></td>
+                            <td id="total-cogs">0.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gross Profit (%)</strong></td>
+                            <td><input type="number" id="gross-profit" value="30" min="0" max="99.99" step="0.01"
+                                    oninput="updateSummary()"></td>
+                        </tr>
+                        <tr class="highlight-total">
+                            <td><strong>Selling Price</strong></td>
+                            <td id="selling-price">0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr style="margin: 20px 0;">
+                <h3>Room Negotiation</h3>
+                <table id="sellingPriceTable">
+                    <thead>
+                        <tr>
+                            <th>If Selling Price</th>
+                            <th>GP%</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sellingPriceTableBody">
+                        <!-- Rows will be added by clicking Add Row button -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                <button onclick="addSellingPriceRow()">Add Row</button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function updateMaterialImage(materialShape) {
+            const imageContainer = document.getElementById('material-image');
+            if (!imageContainer) return;
+
+            if (!materialShape) {
+                imageContainer.innerHTML = '<div class="image-placeholder">Select a material shape to view diagram</div>';
+                return;
+            }
+
+            const imagePath = `img/${materialShape}.png`;
+            imageContainer.innerHTML = `<img src="${imagePath}" alt="${materialShape} diagram" onerror="handleImageError(this)">`;
+        }
+
+        function handleImageError(img) {
+            img.parentElement.innerHTML = '<div class="image-placeholder">Image not available</div>';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const materialShapeSelect = document.getElementById('material-shape');
+            if (materialShapeSelect) {
+                materialShapeSelect.addEventListener('change', function() {
+                    updateMaterialImage(this.value);
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>
